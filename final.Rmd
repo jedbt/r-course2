@@ -50,7 +50,8 @@ beer_state_join <- inner_join(states,
                          by=c("STUSPS" = "State"))
 
 ggplot(data=beer_state_join) +
-       geom_bar(aes(x=STUSPS, y=total), stat="identity", width=0.5)
+       geom_bar(aes(x=STUSPS, y=total), stat="identity", width=0.5) +
+      labs (x="State", y="Craft breweries")
 
 
 pal_beer<- colorNumeric("Blues", domain=beer_state_join$total)
