@@ -5,7 +5,7 @@ date: "8/24/2018"
 output: html_document
 ---
 
-```{r loading, warning=F, message=F, echo=F}
+```{r loading, warning=F, message=F}
 # load packages
 library(tigris)
 library(dplyr)
@@ -22,7 +22,7 @@ The data come from Kaggle. The breweries are sometimes listed by name or town, o
 State shape files were joined to the Kaggle data and a simple dot plot produced. Issues: where the first plot of percent is coming from, and how to change the width on the dot plot so state abbreviations are visible. How to get multiple chunks of code without errors--so I just ran it all at once.
 
 
-```{r analysis, warning=F, message=F, echo=F}
+```{r analysis, warning=F, message=F}
 pubs<- read_csv("breweries-brew-pubs-in-the-usa/8260_1.csv")
 pubs$province <- pubs$province <- ifelse(pubs$province=="Arizona", "AZ", as.character(pubs$province))
 pubs$province <- pubs$province <- ifelse(pubs$province=="California", "CA", as.character(pubs$province))
