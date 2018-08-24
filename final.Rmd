@@ -1,0 +1,80 @@
+---
+title: "Craft breweries"
+author: "John Beatty"
+date: "8/24/2018"
+output: html_document
+---
+
+```{r loading, warning=F, message=F, echo=F}
+# load packages
+library(tigris)
+library(dplyr)
+library(leaflet)
+library(readr)
+library(sf)
+library(ggplot2)
+```
+
+# Craft beers by state
+
+The data come from Kaggle. The breweries are sometimes listed by name or town, or full state spelled out. The latter were cleaned up but not all the former.
+
+State shape files were joined to the Kaggle data and a simple dot plot produced. Issues: where the first plot of percent is coming from, and how to change the width on the dot plot so state abbreviations are visible. How to get multiple chunks of code without errors--so I just ran it all at once.
+
+
+```{r analysis, warning=F, message=F, echo=F}
+pubs<- read_csv("breweries-brew-pubs-in-the-usa/8260_1.csv")
+pubs$province <- pubs$province <- ifelse(pubs$province=="Arizona", "AZ", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="California", "CA", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="Colorado", "CO", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="District of Columbia", "DC", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="Illinois", "IL", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="Massachusetts", "MA", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="Nevada", "NV", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="New York", "NY", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="Nyc", "NY", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="Pennsylvania", "PA", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="Pitt", "PA", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="Tennessee", "TN", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="Texas", "TX", as.character(pubs$province))
+pubs$province <- pubs$province <- ifelse(pubs$province=="Washington", "WA", as.character(pubs$province))
+
+states <- states(cb=T)
+states<-st_as_sf(states)
+beer_state <- pubs %>%
+  group_by(province) %>%
+  summarize(total=n()) %>%
+  rename(State=province)
+beer_state_join <- inner_join(states,
+                         beer_state,
+                         by=c("STUSPS" = "State"))
+ggplot(data=beer_state_join,
+  aes(x=STUSPS, y=total)) +
+  geom_point(color="blue", size=3)
+
+
+pal_beer<- colorNumeric("Blues", domain=beer_state_join$total)
+
+popup_beer <- paste0("<strong>", beer_state_join$STUSPS,
+                     "</strong><br>Total: ",
+                     as.character(beer_state_join$total))
+
+leaflet() %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  setView(-98.483330, 38.712046, zoom = 4) %>%
+  addPolygons(data = beer_state_join ,
+              fillColor = ~pal_beer(beer_state_join$total),
+              fillOpacity = 0.7,
+              weight = 0.2,
+              smoothFactor = 0.2,
+              popup = ~popup_beer) %>%
+  addLegend(pal = pal_beer,
+            values = beer_state_join$total,
+            position = "bottomright",
+             title = "Craft beers by state<br> Click state for data")
+```
+
+
+
+
+
