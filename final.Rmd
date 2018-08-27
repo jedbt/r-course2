@@ -22,7 +22,7 @@ The data come from Kaggle. The breweries are sometimes listed by name or town, o
 State shape files were joined to the Kaggle data and a simple dot plot produced. Issues: where the first plot of percent is coming from, and how to change the width on the dot plot so state abbreviations are visible. How to get multiple chunks of code without errors--so I just ran it all at once.
 
 
-```{r analysis, warning=F, message=F}
+```{r analysis, warning=F, message=F, results='hide'}
 pubs<- read_csv("breweries-brew-pubs-in-the-usa/8260_1.csv")
 pubs$province <- pubs$province <- ifelse(pubs$province=="Arizona", "AZ", as.character(pubs$province))
 pubs$province <- pubs$province <- ifelse(pubs$province=="California", "CA", as.character(pubs$province))
@@ -48,11 +48,12 @@ beer_state <- pubs %>%
 beer_state_join <- inner_join(states,
                          beer_state,
                          by=c("STUSPS" = "State"))
+```
 
+```{r map packages, warning=F, message=F}
 ggplot(data=beer_state_join) +
        geom_bar(aes(x=STUSPS, y=total), stat="identity", width=0.5) + coord_flip() +
       labs (x="State", y="Craft breweries")
-
 
 pal_beer<- colorNumeric("Blues", domain=beer_state_join$total)
 
