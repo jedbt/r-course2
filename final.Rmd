@@ -19,7 +19,7 @@ library(ggplot2)
 
 The data come from Kaggle. The breweries are sometimes listed by name or town, or full state spelled out. The latter were cleaned up but not all the former.
 
-State shape files were joined to the Kaggle data and a simple dot plot produced. Issues: where the first plot of percent is coming from, and how to change the width on the dot plot so state abbreviations are visible. How to get multiple chunks of code without errors--so I just ran it all at once.
+State shape files were joined to the Kaggle data and a simple bar chart produced. An intractive choropleth map follows, but numbers are not adjusted for population. Issues: how to change the width on the bar chart so state abbreviations are visible without flipping the coordinates.
 
 
 ```{r analysis, warning=F, message=F, results='hide'}
